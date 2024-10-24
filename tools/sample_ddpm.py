@@ -6,6 +6,7 @@ import os
 from torchvision.utils import make_grid
 from tqdm import tqdm
 from models.unet_base import Unet
+from pathlib import Path
 from scheduler.linear_noise_scheduler import LinearNoiseScheduler
 
 
@@ -33,8 +34,7 @@ def sample(model, scheduler, train_config, model_config, diffusion_config):
         ims = (ims + 1) / 2
         grid = make_grid(ims, nrow=train_config['num_grid_rows'])
         img = torchvision.transforms.ToPILImage()(grid)
-        if not os.path.exists(os.path.join(train_config['task_name'], 'samples')):
-            os.mkdir(os.path.join(train_config['task_name'], 'samples', 'xt'))
+        (Path(train_config['task_name'])/ 'samples'/ 'xt').mkdir(parents=True, exist_ok=True)
         img.save(os.path.join(train_config['task_name'], 'samples', 'xt','{}.png'.format(i)))
 
         # Save x0
@@ -42,8 +42,7 @@ def sample(model, scheduler, train_config, model_config, diffusion_config):
         ims = (ims + 1) / 2
         grid = make_grid(ims, nrow=train_config['num_grid_rows'])
         img = torchvision.transforms.ToPILImage()(grid)
-        if not os.path.exists(os.path.join(train_config['task_name'], 'samples')):
-            os.mkdir(os.path.join(train_config['task_name'], 'samples', 'x0'))
+        (Path(train_config['task_name'])/ 'samples'/ 'x0').mkdir(parents=True, exist_ok=True)
         img.save(os.path.join(train_config['task_name'], 'samples', 'x0','{}.png'.format(i)))
 
         img.close()
