@@ -28,14 +28,24 @@ def sample(model, scheduler, train_config, model_config, diffusion_config):
         # Use scheduler to get x0 and xt-1
         xt, x0_pred = scheduler.sample_prev_timestep(xt, noise_pred, torch.as_tensor(i).to(device))
         
-        # Save x0
+        # Save xt
         ims = torch.clamp(xt, -1., 1.).detach().cpu()
         ims = (ims + 1) / 2
         grid = make_grid(ims, nrow=train_config['num_grid_rows'])
         img = torchvision.transforms.ToPILImage()(grid)
         if not os.path.exists(os.path.join(train_config['task_name'], 'samples')):
             os.mkdir(os.path.join(train_config['task_name'], 'samples'))
+        img.save(os.path.join(train_config['task_name'], 'samples', 'xt_{}.png'.format(i)))
+
+        # Save x0
+        ims = torch.clamp(x0_pred, -1., 1.).detach().cpu()
+        ims = (ims + 1) / 2
+        grid = make_grid(ims, nrow=train_config['num_grid_rows'])
+        img = torchvision.transforms.ToPILImage()(grid)
+        if not os.path.exists(os.path.join(train_config['task_name'], 'samples')):
+            os.mkdir(os.path.join(train_config['task_name'], 'samples'))
         img.save(os.path.join(train_config['task_name'], 'samples', 'x0_{}.png'.format(i)))
+
         img.close()
 
 
